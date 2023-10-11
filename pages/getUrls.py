@@ -16,8 +16,8 @@ def getChildUrls(page):
 
 def isPageMatched(page, css_class):
     result = 0
-    for tag in page.find_all('dev'):
-        if str(tag.attrs.get('class')) == css_class:
+    for tag in page.find_all('div'):
+        if str(tag.attrs.get('class')).find(css_class) >= 0:
             result = 1
 
     return result
