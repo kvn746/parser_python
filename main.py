@@ -2,11 +2,16 @@ from bs4 import BeautifulSoup as bs
 import requests
 import pages.getUrls
 
-# down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brelok-apollo-mf-novij.html']
+down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brelok-apollo-mf-novij.html']
 
 url = "https://keyfob.ru/brelki/pulti-apollo/"
-page = pages.getUrls.getPage(url)
-print(pages.getUrls.isPageMatched(page, 'product-info'))
+
+if url in down:
+    print(1)
+else:
+    print(0)
+# page = pages.getUrls.getPage(url)
+# print(pages.getUrls.isPageMatched(page, 'product-info'))
 
 # url = "https://keyfob.ru/brelki/brelki--pulti-distancionnogo-upravlenija-apollo/"
 # page = pages.getUrls.getPage(url)
