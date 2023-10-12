@@ -1,6 +1,10 @@
 from bs4 import BeautifulSoup as bs
 import requests
 import pages.data
+import pages.image
+import os
+
+os.makedirs('images', 775, True)
 
 down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brelok-apollo-mf-novij.html']
 
@@ -34,5 +38,9 @@ with open("good.html") as fp:
     page = bs(fp, 'html5lib')
 
     description = pages.data.getDescription(page, 'product-info')
-    print(description)
+    imageUrl = pages.data.getImageUrl(page, 'product-info')
+    print(imageUrl)
+    filename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
+    print(filename)
+    pages.image.saveImage(imageUrl, filename)
     print(pages.data.getParameters(description))
