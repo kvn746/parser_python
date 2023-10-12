@@ -1,26 +1,26 @@
 from bs4 import BeautifulSoup as bs
 import requests
-import pages.getUrls
+import pages.data
 
 down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brelok-apollo-mf-novij.html']
 
-url = "https://keyfob.ru"
+# url = "https://keyfob.ru"
 
 # if url in down:
 #     print(1)
 # else:
 #     print(0)
-# page = pages.getUrls.getPage(url)
-# print(pages.getUrls.isPageMatched(page, 'product-info'))
+# page = pages.data.getPage(url)
+# print(pages.data.isPageMatched(page, 'product-info'))
 
 # url = "https://keyfob.ru/brelki/brelki--pulti-distancionnogo-upravlenija-apollo/"
-# page = pages.getUrls.getPage(url)
-# links = pages.getUrls.getChildUrls(page)
+# page = pages.data.getPage(url)
+# links = pages.data.getChildUrls(page)
 # linksCategories = []
 # for link in links:
 #     if link.find('keyfob.ru') >= 0 and link.find('?') < 0 and link != 'https://keyfob.ru/':
-#         childPage = pages.getUrls.getPage(link)
-#         if pages.getUrls.isPageMatched(childPage, 'category-info'):
+#         childPage = pages.data.getPage(link)
+#         if pages.data.isPageMatched(childPage, 'category-info'):
 #             linksCategories.append(link)
 #             print(link)
 
@@ -28,5 +28,11 @@ url = "https://keyfob.ru"
 #     print(link)
 # print(soup.prettify())
 
-page = pages.getUrls.getPage('https://keyfob.ru/brelki/brelok-apollo-mf-novij.html')
-print(pages.getUrls.getContent(page, 'product-info'))
+# page = pages.data.getPage('https://keyfob.ru/brelki/brelok-apollo-mf-novij.html')
+
+with open("good.html") as fp:
+    page = bs(fp, 'html5lib')
+
+    description = pages.data.getDescription(page, 'product-info')
+    print(description)
+    print(pages.data.getParameters(description))
