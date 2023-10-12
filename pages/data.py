@@ -2,9 +2,12 @@ from bs4 import BeautifulSoup as bs
 import requests
 
 def getPage(url):
-    html = requests.get(url)
+    try:
+        html = requests.get(url)
 
-    return bs(html.content, 'html5lib')
+        return bs(html.content, 'html5lib')
+    except:
+        return None
 
 def getChildUrls(page):
 
@@ -45,6 +48,10 @@ def getDescription(page, css_class):
 def getParameters(description):
     try:
         parameters = description.text
+        parameters = parameters.replace(' ', '')
+        parameters = parameters.replace('\t', '')
+        parameters = parameters.split('\n')
+        parameters = list(filter(None, parameters))
 
         return parameters
     except:
