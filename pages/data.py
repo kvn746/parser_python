@@ -35,7 +35,7 @@ def getImageUrl(page, css_class):
         info = page.find('div', css_class)
         return info.find('a', 'colorbox').attrs.get('href')
     except:
-        return ''
+        return None
 
 def getDescription(page, css_class):
     try:
@@ -43,7 +43,7 @@ def getDescription(page, css_class):
         description = info.find('div', 'description')
         return description
     except:
-        return ''
+        return None
 
 def getParameters(description):
     try:
@@ -55,4 +55,17 @@ def getParameters(description):
 
         return parameters
     except:
-        return ''
+        return None
+
+def getPrice(page, css_class):
+    try:
+        price = page.find('div', css_class).text
+        price = price.replace(' ', '')
+        price = price.replace('\t', '')
+        price = price.split('\n')
+        price = list(filter(None, price))
+
+        return float(price[1].replace('р.',''))
+    except:
+
+        return None

@@ -42,5 +42,17 @@ with open("good.html") as fp:
     print(imageUrl)
     filename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
     print(filename)
-    pages.image.saveImage(imageUrl, filename)
-    print(pages.data.getParameters(description))
+    # pages.image.saveImage(imageUrl, filename)
+    # print(pages.data.getParameters(description))
+
+    parameters = pages.data.getParameters(description)
+    for parameter in parameters:
+        if parameter.find('Производитель') >= 0:
+            manufacturer = parameter[parameter.find(':') + 1:]
+        if parameter.find('Артикул') >= 0:
+            artikul = parameter[parameter.find(':') + 1:]
+        if parameter.find('Модель') >= 0:
+            model = parameter[parameter.find(':') + 1:]
+
+    price = pages.data.getPrice(page, 'price')
+    print(price)
