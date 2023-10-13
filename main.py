@@ -3,6 +3,8 @@ import pages.data
 import pages.image
 import os
 
+URL = "https://keyfob.ru"
+
 def getImageUrl(page, css_class):
     try:
         info = pages.data.getTag(page, 'div', css_class)
@@ -50,8 +52,11 @@ def parsePage(page):
     try:
         description = getDescription(page, 'description')
         imageUrl = getImageUrl(page, 'product-info')
-        filename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
-        pages.image.saveImage(imageUrl, filename)
+        filename = imageUrl[imageUrl.rfind('/') + 1:]
+        imageFilename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
+        filename = filename[:filename.rfind('.')]
+
+        # pages.image.saveImage(imageUrl, imageFilename)
 
         parameters = getParameters(description)
         for parameter in parameters:
@@ -63,18 +68,24 @@ def parsePage(page):
                 model = parameter[parameter.find(':') + 1:]
 
         price = getPrice(page, 'price')
-
-        return ('[{"artikul":"' + artikul +
+        json = ('[{"artikul":"' + artikul +
                 '", "model":"' + model +
                 '", "manufacturer":"' + manufacturer +
                 '", "image":"' + filename +
-                '", "link":"' + imageUrl + '"}]'
-                )
+                '", "price":"' + str(price) +
+                '", "link":"' + imageUrl + '"}]')
+
+        pages.image.saveFile(json, 'json/' + filename + '.json', "w")
+
+        return (json)
     except:
 
         return None
 
-os.makedirs('images', 775, True)
+if not os.path.exists('images'):
+    os.makedirs('images')
+if not os.path.exists('json'):
+    os.makedirs('json')
 
 down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brelok-apollo-mf-novij.html']
 

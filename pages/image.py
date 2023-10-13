@@ -1,7 +1,19 @@
 import requests
 
 def saveImage(imageUrl, filename):
-    p = requests.get(imageUrl)
-    out = open(filename, "wb")
-    out.write(p.content)
-    out.close()
+    try:
+        p = requests.get(imageUrl)
+        saveFile(p.content, filename, "wb")
+
+    except:
+
+        return
+
+def saveFile(content, filename, format):
+    try:
+        out = open(filename, format)
+        out.write(content)
+        out.close()
+    except:
+
+        return
