@@ -4,6 +4,34 @@ import pages.data
 import pages.image
 import os
 
+def parsePage(page):
+    try:
+        description = pages.data.getDescription(page, 'product-info')
+        imageUrl = pages.data.getImageUrl(page, 'product-info')
+        filename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
+        pages.image.saveImage(imageUrl, filename)
+
+        parameters = pages.data.getParameters(description)
+        for parameter in parameters:
+            if parameter.find('Производитель') >= 0:
+                manufacturer = parameter[parameter.find(':') + 1:]
+            if parameter.find('Артикул') >= 0:
+                artikul = parameter[parameter.find(':') + 1:]
+            if parameter.find('Модель') >= 0:
+                model = parameter[parameter.find(':') + 1:]
+
+        price = pages.data.getPrice(page, 'price')
+
+        return ('[{"artikul":"' + artikul +
+                '", "model":"' + model +
+                '", "manufacturer":"' + manufacturer +
+                '", "image":"' + filename +
+                '", "link":"' + imageUrl + '"}]'
+                )
+    except:
+
+        return None
+
 os.makedirs('images', 775, True)
 
 down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brelok-apollo-mf-novij.html']
@@ -36,23 +64,6 @@ down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brel
 
 with open("good.html") as fp:
     page = bs(fp, 'html5lib')
+    print(parsePage(page))
 
-    description = pages.data.getDescription(page, 'product-info')
-    imageUrl = pages.data.getImageUrl(page, 'product-info')
-    print(imageUrl)
-    filename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
-    print(filename)
-    # pages.image.saveImage(imageUrl, filename)
-    # print(pages.data.getParameters(description))
 
-    parameters = pages.data.getParameters(description)
-    for parameter in parameters:
-        if parameter.find('Производитель') >= 0:
-            manufacturer = parameter[parameter.find(':') + 1:]
-        if parameter.find('Артикул') >= 0:
-            artikul = parameter[parameter.find(':') + 1:]
-        if parameter.find('Модель') >= 0:
-            model = parameter[parameter.find(':') + 1:]
-
-    price = pages.data.getPrice(page, 'price')
-    print(price)
