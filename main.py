@@ -1,17 +1,59 @@
 from bs4 import BeautifulSoup as bs
-import requests
 import pages.data
 import pages.image
 import os
 
+def getImageUrl(page, css_class):
+    try:
+        info = pages.data.getTag(page, 'div', css_class)
+
+        return info.find('a', 'colorbox').attrs.get('href')
+    except:
+
+        return None
+
+def getDescription(page, css_class):
+    try:
+
+        return pages.data.getTag(page, 'div', css_class)
+    except:
+
+        return None
+
+def getParameters(description):
+    try:
+        parameters = description.text
+        parameters = parameters.replace(' ', '')
+        parameters = parameters.replace('\t', '')
+        parameters = parameters.split('\n')
+        parameters = list(filter(None, parameters))
+
+        return parameters
+    except:
+
+        return None
+
+def getPrice(page, css_class):
+    try:
+        price = pages.data.getTag(page, 'div', css_class).text
+        price = price.replace(' ', '')
+        price = price.replace('\t', '')
+        price = price.split('\n')
+        price = list(filter(None, price))
+
+        return float(price[1].replace('р.',''))
+    except:
+
+        return None
+
 def parsePage(page):
     try:
-        description = pages.data.getDescription(page, 'product-info')
-        imageUrl = pages.data.getImageUrl(page, 'product-info')
+        description = getDescription(page, 'description')
+        imageUrl = getImageUrl(page, 'product-info')
         filename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
         pages.image.saveImage(imageUrl, filename)
 
-        parameters = pages.data.getParameters(description)
+        parameters = getParameters(description)
         for parameter in parameters:
             if parameter.find('Производитель') >= 0:
                 manufacturer = parameter[parameter.find(':') + 1:]
@@ -20,7 +62,7 @@ def parsePage(page):
             if parameter.find('Модель') >= 0:
                 model = parameter[parameter.find(':') + 1:]
 
-        price = pages.data.getPrice(page, 'price')
+        price = getPrice(page, 'price')
 
         return ('[{"artikul":"' + artikul +
                 '", "model":"' + model +

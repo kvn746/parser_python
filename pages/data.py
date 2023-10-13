@@ -10,62 +10,29 @@ def getPage(url):
         return None
 
 def getChildUrls(page):
+    try:
+        links = []
+        for tag in page.find_all('a'):
+            links.append(str(tag.attrs.get('href')))
 
-    links = []
-    for tag in page.find_all('a'):
-        links.append(str(tag.attrs.get('href')))
+        return links
+    except:
 
-    return links
+        return None
 
 def isPageMatched(page, css_class):
     try:
         page.find('div', css_class)
+
         return 1
     except:
+
         return 0
-    result = 0
-    for tag in page.find_all('div'):
-        if str(tag.attrs.get('class')).find(css_class) >= 0:
-            result = 1
 
-    return result
-
-def getImageUrl(page, css_class):
+def getTag(page, tag, css_class):
     try:
-        info = page.find('div', css_class)
-        return info.find('a', 'colorbox').attrs.get('href')
-    except:
-        return None
 
-def getDescription(page, css_class):
-    try:
-        info = page.find('div', css_class)
-        description = info.find('div', 'description')
-        return description
-    except:
-        return None
-
-def getParameters(description):
-    try:
-        parameters = description.text
-        parameters = parameters.replace(' ', '')
-        parameters = parameters.replace('\t', '')
-        parameters = parameters.split('\n')
-        parameters = list(filter(None, parameters))
-
-        return parameters
-    except:
-        return None
-
-def getPrice(page, css_class):
-    try:
-        price = page.find('div', css_class).text
-        price = price.replace(' ', '')
-        price = price.replace('\t', '')
-        price = price.split('\n')
-        price = list(filter(None, price))
-
-        return float(price[1].replace('р.',''))
+        return page.find(tag, css_class)
     except:
 
         return None
