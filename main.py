@@ -1,9 +1,9 @@
 import json
-
 import pandas as pd
 import pages.data
 import pages.image
 import os
+from sys import platform
 
 URL = "http://novotechnic.ru"
 DOMEN = "novotechnic.ru"
@@ -96,7 +96,7 @@ if not os.path.exists('images'):
 if not os.path.exists('json'):
     os.makedirs('json')
 
-page = pages.data.getPage("")
+page = pages.data.getPage(URL)
 
 links = pages.data.getChildUrls(page)
 linksCategories = []
@@ -141,7 +141,10 @@ for good in goods:
 
 try:
     pages.image.saveFile(csv, 'result.csv', 'w')
-    df = pd.read_csv('result.csv', sep = '\t')
+    if platform == 'win32' or platform == 'win64':
+        df = pd.read_csv('result.csv', sep='\t', encoding='windows-1251')
+    else:
+        df = pd.read_csv('result.csv', sep='\t')
     df.to_excel('result.xlsx')
 except:
     None
