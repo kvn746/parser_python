@@ -5,11 +5,14 @@ import os
 
 URL = "https://keyfob.ru"
 
+down = []
+csv = "artikul;model;manufacturer;image;price;link" + '\n'
+
 def getImageUrl(page, css_class):
     try:
         info = pages.data.getTag(page, 'div', css_class)
 
-        return info.find('a', 'colorbox').attrs.get('href')
+        return info.find('a', 'cloud-zoom').attrs.get('href')
     except:
 
         return None
@@ -55,10 +58,12 @@ def parsePage(page):
         filename = imageUrl[imageUrl.rfind('/') + 1:]
         imageFilename = 'images/' + imageUrl[imageUrl.rfind('/') + 1:]
         filename = filename[:filename.rfind('.')]
-
-        # pages.image.saveImage(imageUrl, imageFilename)
+        pages.image.saveImage(imageUrl, imageFilename)
 
         parameters = getParameters(description)
+        manufacturer = ''
+        artikul = ''
+        model = ''
         for parameter in parameters:
             if parameter.find('Производитель') >= 0:
                 manufacturer = parameter[parameter.find(':') + 1:]
@@ -66,12 +71,13 @@ def parsePage(page):
                 artikul = parameter[parameter.find(':') + 1:]
             if parameter.find('Модель') >= 0:
                 model = parameter[parameter.find(':') + 1:]
-
+        if artikul == '':
+            artikul = model
         price = getPrice(page, 'price')
         json = ('[{"artikul":"' + artikul +
                 '", "model":"' + model +
                 '", "manufacturer":"' + manufacturer +
-                '", "image":"' + filename +
+                '", "image":"' + imageFilename +
                 '", "price":"' + str(price) +
                 '", "link":"' + imageUrl + '"}]')
 
@@ -87,7 +93,7 @@ if not os.path.exists('images'):
 if not os.path.exists('json'):
     os.makedirs('json')
 
-down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brelok-apollo-mf-novij.html']
+
 
 # url = "https://keyfob.ru"
 
@@ -115,8 +121,25 @@ down = ['https://keyfob.ru/brelki/pulti-apollo/', 'https://keyfob.ru/brelki/brel
 
 # page = pages.data.getPage('https://keyfob.ru/brelki/brelok-apollo-mf-novij.html')
 
-with open("good.html") as fp:
-    page = bs(fp, 'html5lib')
-    print(parsePage(page))
+# with open("good.html") as fp:
+#     page = bs(fp, 'html5lib')
+#     print(parsePage(page))
 
+
+with open("main.html") as fp:
+    page = bs(fp, 'html5lib')
+
+    links = pages.data.getChildUrls(page)
+    linksCategories = []
+    for link in links:
+        if link.find('novotechnic.ru') >= 0 and link.find('?') < 0 and link != 'http://novotechnic.ru/':
+            childPage = pages.data.getPage(link)
+            if pages.data.isPageMatched(childPage, 'div', 'category-info'):
+                linksCategories.append(link)
+
+    print(linksCategories)
+
+# page = pages.data.getPage("http://novotechnic.ru/login/")
+#
+# print(pages.data.isPageMatched(page, 'div', 'category-info'))
 
